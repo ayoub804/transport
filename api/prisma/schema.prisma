@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  DRIVER
+  CLIENT
+}
+
+enum TripStatus {
+  SCHEDULED
+  CANCELLED
+  COMPLETED
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  CANCELLED
+  USED
+}
+
+model User {
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String
+  email        String        @unique
+  passwordHash String
+  role         UserRole      @default(CLIENT)
+  createdAt    DateTime      @default(now())
+  drivenTrips  Trip[]        @relation("TripDriver")
+  reservations Reservation[]
+}
+
+model Vehicle {
+  id        String   @id @default(uuid()) @db.Uuid
+  plate     String   @unique
+  capacity  Int
+  createdAt DateTime @default(now())
+  trips     Trip[]
+}
+
+model Trip {
+  id          String        @id @default(uuid()) @db.Uuid
+  origin      String
+  destination String
+  departureAt DateTime
+  vehicleId   String        @db.Uuid
+  driverId    String?       @db.Uuid
+  status      TripStatus    @default(SCHEDULED)
+  createdAt   DateTime      @default(now())
+  vehicle     Vehicle       @relation(fields: [vehicleId], references: [id])
+  driver      User?         @relation("TripDriver", fields: [driverId], references: [id])
+  reservations Reservation[]
+
+  @@index([departureAt])
+}
+
+model Reservation {
+  id         String            @id @default(uuid()) @db.Uuid
+  userId     String            @db.Uuid
+  tripId     String            @db.Uuid
+  seatNumber Int
+  status     ReservationStatus @default(CONFIRMED)
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+  user       User              @relation(fields: [userId], references: [id])
+  trip       Trip              @relation(fields: [tripId], references: [id])
+
+  @@unique([tripId, seatNumber])
+  @@index([userId])
+}
