@@ -63,10 +63,9 @@ export default function AdminTripsPage() {
       departureAt: new Date(departureAt).toISOString(),
       vehicleId,
       driverId: driverId.trim() || null,
-      status,
     };
     try {
-      if (editing) await tripsApi.update(editing.id, data);
+      if (editing) await tripsApi.update(editing.id, { ...data, status });
       else await tripsApi.create(data);
       setModal(false);
       await load();
