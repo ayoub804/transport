@@ -13,7 +13,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { RouteGuard } from "@/components/route-guard";
 import type { UserRole } from "@/lib/types";
@@ -71,23 +71,54 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const sidebarRef = useRef<HTMLElement>(null);
+  const menuRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const media = window.matchMedia("(max-width: 760px)");
+    if (!media.matches) return;
+    const menuButton = menuRef.current;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const links = sidebarRef.current?.querySelectorAll<HTMLElement>("a, button");
+    links?.[0]?.focus();
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Tab" || !links?.length) return;
+      const first = links[0];
+      const last = links[links.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    }
+    const onResize = () => { if (!media.matches) setOpen(false); };
+    media.addEventListener("change", onResize);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKeyDown);
+      media.removeEventListener("change", onResize);
+      menuButton?.focus();
+    };
+  }, [open]);
   if (!user) return null;
   const items = navigation[user.role];
 
   return (
     <div className="app-frame">
+      <a className="skip-link" href="#main-content">Skip to content</a>
       {open && <button className="mobile-backdrop" aria-label="Close menu" onClick={() => setOpen(false)} />}
-      <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
+      <aside id="app-navigation" ref={sidebarRef} className={`sidebar ${open ? "sidebar-open" : ""}`}>
+        <button className="icon-button sidebar-close" aria-label="Close menu" onClick={() => setOpen(false)}><X size={20} /></button>
         <Link className="brand-lockup" href={user.role === "CLIENT" ? "/trips" : items[0].href} onClick={() => setOpen(false)}>
           <span className="brand-mark"><BusFront size={21} strokeWidth={2.2} /></span>
-          <span><strong>wayfare</strong><small>TRAVEL, MADE SIMPLE</small></span>
+          <span><strong>wayfare</strong><small>A BETTER WAY TO GO</small></span>
         </Link>
-        <div className="nav-caption">WORKSPACE</div>
+        <div className="nav-caption">{user.role === "CLIENT" ? "YOUR JOURNEYS" : user.role === "DRIVER" ? "DRIVER WORKSPACE" : "MANAGE YOUR NETWORK"}</div>
         <nav className="side-nav" aria-label="Main navigation">
           {items.map(({ href, label, icon: Icon }) => {
-            const active = pathname === href || (href !== "/trips" && pathname.startsWith(`${href}/`));
+            const active = pathname === href || pathname.startsWith(`${href}/`);
             return (
-              <Link key={href} href={href} className={`nav-link ${active ? "nav-link-active" : ""}`} onClick={() => setOpen(false)}>
+              <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`nav-link ${active ? "nav-link-active" : ""}`} onClick={() => setOpen(false)}>
                 <Icon size={18} strokeWidth={1.8} /><span>{label}</span>
               </Link>
             );
@@ -102,13 +133,13 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </aside>
-      <div className="main-column">
+      <div className="main-column" inert={open || undefined}>
         <header className="topbar">
-          <button className="icon-button mobile-menu" aria-label={open ? "Close menu" : "Open menu"} onClick={() => setOpen(!open)}>{open ? <X size={20} /> : <Menu size={20} />}</button>
+          <button ref={menuRef} className="icon-button mobile-menu" aria-label="Open menu" aria-expanded={open} aria-controls="app-navigation" onClick={() => setOpen(true)}><Menu size={20} /></button>
           <div className="breadcrumb"><span>WAYFARE</span><span className="crumb-slash">/</span><strong>{pageTitle(pathname)}</strong></div>
           <div className="topbar-right"><span className="secure-label"><span /> Secure workspace</span><span className="top-avatar">{user.name.slice(0, 1).toUpperCase()}</span></div>
         </header>
-        <main className="page-content">{children}</main>
+        <main id="main-content" className="page-content" tabIndex={-1}>{children}</main>
         <footer className="footer-note">Made for the journey ahead <span>·</span> Wayfare transport</footer>
       </div>
     </div>

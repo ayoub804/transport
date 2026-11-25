@@ -31,7 +31,7 @@ export default function AdminDashboardPage() {
 
   return (
     <AppShell roles={["ADMIN"]}>
-      <PageHeading eyebrow="THE BIG PICTURE" title="Good morning, admin." description="A clear view of your network and the journeys your passengers are taking." action={<Link className="button button-secondary" href="/admin/reservations">All reservations <ArrowRight size={14} /></Link>} />
+      <PageHeading eyebrow="YOUR NETWORK, AT A GLANCE" title="Everything. In perspective." description="Your passengers, departures, and reservations. One clear view." action={<Link className="button button-secondary" href="/admin/reservations">All reservations <ArrowRight size={14} /></Link>} />
       {loading ? <div className="card"><LoadingState label="Gathering your latest numbers…" /></div> : error ? <ErrorState message={error} onRetry={() => void load()} /> : summary ? <>
         <div className="grid grid-3">
           <article className="card metric-card"><div className="metric-label">All reservations <span className="metric-icon"><Ticket size={15} /></span></div><div className="metric-value">{summary.totalReservations}</div><div className="metric-foot">Across every trip on the network</div></article>

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { AuthProvider } from "@/components/auth-provider";
 import { ServiceWorker } from "@/components/service-worker";
 import "./globals.css";
+import "./glass.css";
 
 export const metadata: Metadata = {
   title: "Wayfare — Travel, made simple",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#123c32",
+  themeColor: "#f5f5f7",
 };
 
 export default function RootLayout({
@@ -19,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body><AuthProvider><ServiceWorker />{children}</AuthProvider></body>
+      <body><div className="ambient-background" aria-hidden="true" /><AuthProvider><ServiceWorker />{children}</AuthProvider></body>
     </html>
   );
 }

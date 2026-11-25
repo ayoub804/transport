@@ -40,11 +40,11 @@ export function PageHeading({
 }
 
 export function LoadingState({ label = "Loading your information…" }: { label?: string }) {
-  return <div className="inline-state"><LoaderCircle className="spin" size={19} /><span>{label}</span></div>;
+  return <div className="inline-state" role="status"><LoaderCircle className="spin" size={19} aria-hidden="true" /><span>{label}</span></div>;
 }
 
 export function ErrorState({ message, onRetry }: { message: string; onRetry?: () => void }) {
-  return <div className="alert alert-error"><AlertCircle size={18} /><span>{message}</span>{onRetry && <button onClick={onRetry}>Try again</button>}</div>;
+  return <div className="alert alert-error" role="alert"><AlertCircle size={18} aria-hidden="true" /><span>{message}</span>{onRetry && <button onClick={onRetry}>Try again</button>}</div>;
 }
 
 export function EmptyState({ title, description, action }: { title: string; description: string; action?: ReactNode }) {
