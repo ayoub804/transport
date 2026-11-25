@@ -16,6 +16,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { RouteGuard } from "@/components/route-guard";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { UserRole } from "@/lib/types";
 
 interface NavigationItem {
@@ -137,7 +138,7 @@ function ShellFrame({ children }: { children: React.ReactNode }) {
         <header className="topbar">
           <button ref={menuRef} className="icon-button mobile-menu" aria-label="Open menu" aria-expanded={open} aria-controls="app-navigation" onClick={() => setOpen(true)}><Menu size={20} /></button>
           <div className="breadcrumb"><span>WAYFARE</span><span className="crumb-slash">/</span><strong>{pageTitle(pathname)}</strong></div>
-          <div className="topbar-right"><span className="secure-label"><span /> Secure workspace</span><span className="top-avatar">{user.name.slice(0, 1).toUpperCase()}</span></div>
+          <div className="topbar-right"><ThemeToggle /><span className="secure-label"><span /> Secure workspace</span><span className="top-avatar">{user.name.slice(0, 1).toUpperCase()}</span></div>
         </header>
         <main id="main-content" className="page-content" tabIndex={-1}>{children}</main>
         <footer className="footer-note">Made for the journey ahead <span>·</span> Wayfare transport</footer>

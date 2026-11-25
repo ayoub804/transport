@@ -2,12 +2,19 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsByteLength,
   IsEmail,
+  IsIn,
+  IsOptional,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
 
 export class RegisterDto {
+  @ApiProperty({ enum: ['CLIENT', 'DRIVER'], default: 'CLIENT', required: false })
+  @IsOptional()
+  @IsIn(['CLIENT', 'DRIVER'])
+  role?: 'CLIENT' | 'DRIVER';
+
   @ApiProperty({ example: 'Sam Passenger', minLength: 2, maxLength: 100 })
   @IsString()
   @MinLength(2)

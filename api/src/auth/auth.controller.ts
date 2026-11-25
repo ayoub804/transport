@@ -35,7 +35,7 @@ export class AuthController {
 
   @Post('register')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Register a client account' })
+  @ApiOperation({ summary: 'Register a passenger or driver account' })
   @ApiCreatedResponse({ type: SafeUserDto })
   register(@Body() dto: RegisterDto): Promise<SafeUser> {
     return this.authService.register(dto);

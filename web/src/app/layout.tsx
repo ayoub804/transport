@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f5f7",
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body><div className="ambient-background" aria-hidden="true" /><AuthProvider><ServiceWorker />{children}</AuthProvider></body>
+      <body><AuthProvider><ServiceWorker />{children}</AuthProvider></body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -31,6 +32,9 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto): Promise<SafeUser> {
+    if (dto.role !== undefined && dto.role !== 'CLIENT' && dto.role !== 'DRIVER') {
+      throw new BadRequestException('Choose Passenger or Driver to register');
+    }
     const passwordHash = await bcrypt.hash(dto.password, 12);
     try {
       return await this.prisma.user.create({
@@ -38,7 +42,7 @@ export class AuthService {
           name: dto.name.trim(),
           email: dto.email.trim().toLowerCase(),
           passwordHash,
-          role: UserRole.CLIENT,
+          role: dto.role === 'DRIVER' ? UserRole.DRIVER : UserRole.CLIENT,
         },
         select: safeUserSelect,
       });

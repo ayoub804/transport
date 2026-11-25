@@ -37,8 +37,8 @@ export function getErrorMessage(error: unknown): string {
 export const authApi = {
   login: async (email: string, password: string) =>
     (await sessionApi.post<User>("/login", { email, password })).data,
-  register: async (name: string, email: string, password: string) =>
-    (await sessionApi.post<User>("/register", { name, email, password })).data,
+  register: async (name: string, email: string, password: string, role: "CLIENT" | "DRIVER" = "CLIENT") =>
+    (await sessionApi.post<User>("/register", { name, email, password, role })).data,
   me: async () => (await sessionApi.get<User>("/me")).data,
   logout: async () => sessionApi.post("/logout"),
 };

@@ -18,7 +18,7 @@ interface AuthContextValue {
   loading: boolean;
   error: string | null;
   login: (email: string, password: string) => Promise<User>;
-  register: (name: string, email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, role?: "CLIENT" | "DRIVER") => Promise<void>;
   logout: () => Promise<void>;
   refresh: () => Promise<User | null>;
 }
@@ -70,9 +70,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       router.replace(landingFor(user.role));
       return;
     }
-    if (pathname === "/") {
-      router.replace(user ? landingFor(user.role) : "/login");
-    }
   }, [loading, pathname, router, user]);
 
   const login = useCallback(
@@ -93,10 +90,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 
   const register = useCallback(
-    async (name: string, email: string, password: string) => {
+    async (name: string, email: string, password: string, role: "CLIENT" | "DRIVER" = "CLIENT") => {
       setError(null);
       try {
-        await authApi.register(name, email, password);
+        await authApi.register(name, email, password, role);
         await login(email, password);
       } catch (requestError) {
         const message =

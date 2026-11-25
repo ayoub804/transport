@@ -120,7 +120,7 @@ Architecture, use case, domain class, reservation, and QR-ticket validation diag
 - The root `.env` is the Compose configuration source and is also loaded by the API from the repository root; the API does not require committed environment-specific files.
 - The initial Prisma migration is stored under `api/prisma/migrations` and is applied locally with `prisma migrate dev`. Production deployments should apply committed migrations with `prisma migrate deploy`.
 - Development seed accounts use fixed documented credentials so the seeded local system can be exercised immediately.
-- Registration always creates a `CLIENT`; the requested auth foundation does not expose public role selection.
+- Registration offers Passenger (`CLIENT`, the default) or Driver (`DRIVER`). Public registration rejects `ADMIN` and all other roles.
 - JWTs are bearer access tokens with a configurable expiry. Browser token storage is deferred to the frontend phase.
 
 ## Project layout

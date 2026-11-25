@@ -1,33 +1,16 @@
 ﻿import Link from "next/link";
-import { ArrowUpRight, BusFront, LockKeyhole } from "lucide-react";
+import { ArrowLeft, BusFront, LockKeyhole } from "lucide-react";
 import type { ReactNode } from "react";
-import { JourneyArt } from "@/components/journey-art";
-
-function Brand() {
-  return <Link className="brand-lockup" href="/login" aria-label="Wayfare home"><span className="brand-mark"><BusFront size={23} /></span><span><strong>wayfare</strong><small>A BETTER WAY TO GO</small></span></Link>;
-}
+import { LinkedRings } from "@/components/linked-rings";
+import { ReactiveBackground } from "@/components/reactive-background";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function AuthLayout({ children, register = false }: { children: ReactNode; register?: boolean }) {
-  return (
-    <div className="auth-layout">
-      <header className="auth-header"><Brand /><Link className="auth-header-link" href={register ? "/login" : "/register"}>{register ? "Already a member?" : "Start your journey"}<ArrowUpRight size={16} /></Link></header>
-      <aside className="auth-aside">
-        <div className="auth-aside-copy">
-          <div className="eyebrow">EVERYDAY TRAVEL. REIMAGINED.</div>
-          <h2>Go places.<br /><em>Feel free.</em></h2>
-          <p>A simpler way to find your trip, choose your seat, and take the day somewhere new.</p>
-          <JourneyArt />
-        </div>
-        <div className="auth-footnote">A little less effort. A lot more possibility.</div>
-      </aside>
-      <main className="auth-main" id="main-content">
-        <div className="auth-form-wrap">
-          <span className="auth-form-icon"><BusFront size={25} strokeWidth={1.6} /></span>
-          {children}
-          <div className="auth-form-note"><LockKeyhole size={14} /> Your journeys, in one secure place.</div>
-        </div>
-      </main>
-      <footer className="auth-bottom">Wayfare <span>Made for wherever life takes you.</span></footer>
-    </div>
-  );
+  return <div className="auth-layout">
+    <ReactiveBackground />
+    <header className="auth-header"><Link className="brand-lockup" href="/"><span className="brand-mark"><BusFront size={23}/></span><strong>wayfare.</strong></Link><div className="public-nav-actions"><ThemeToggle /><Link className="auth-header-link" href={register ? "/login" : "/register"}>{register ? "Sign in" : "Create account"}</Link></div></header>
+    <aside className="auth-aside"><div className="auth-aside-copy"><span className="eyebrow">PEOPLE. PLACES. POSSIBILITIES.</span><h2>Better<br />connected.<br /><em>With Wayfare.</em></h2><p>Your next seat. Your next stop.<br />Your next chapter starts here.</p><LinkedRings /></div></aside>
+    <main className="auth-main" id="main-content"><div className="auth-form-wrap"><Link href="/" className="back-link"><ArrowLeft size={14} /> Back to home</Link>{children}<div className="auth-form-note"><LockKeyhole size={14} /> Your account. Your journey.</div></div></main>
+    <footer className="auth-bottom">WAYFARE TRANSPORT <span>People and places. Better connected.</span></footer>
+  </div>;
 }
