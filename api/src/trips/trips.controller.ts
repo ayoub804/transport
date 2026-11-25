@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,6 +22,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
+import type { Request } from 'express';
+import type { AuthenticatedUser } from '../auth/auth.types.js';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard.js';
 import { Roles } from '../common/roles.decorator.js';
 import { RolesGuard } from '../common/roles.guard.js';
@@ -71,12 +74,14 @@ export class TripsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.ADMIN, UserRole.DRIVER)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create and assign a trip (admin)' })
+  @ApiOperation({ summary: 'Create a trip (admin or driver; drivers are assigned automatically)' })
   @ApiCreatedResponse({ description: 'Created trip' })
-  create(@Body() dto: CreateTripDto) {
-    return this.tripsService.create(dto);
+  create(@Body() dto: CreateTripDto, @Req() request: Request & { user: AuthenticatedUser }) {
+    return this.tripsService.create(request.user.role === UserRole.DRIVER
+      ? { ...dto, driverId: request.user.id }
+      : dto);
   }
 
   @Patch(':id')

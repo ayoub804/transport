@@ -36,7 +36,8 @@ export class VehiclesController {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List vehicles (admin)' })
+  @Roles(UserRole.ADMIN, UserRole.DRIVER)
+  @ApiOperation({ summary: 'List vehicles (admin or driver)' })
   @ApiOkResponse({ description: 'Vehicles ordered by creation time' })
   findAll() {
     return this.vehiclesService.findAll();

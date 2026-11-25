@@ -23,7 +23,7 @@ This release changes both `web` and `api`. Deploy the API first so it accepts th
 2. Choose Driver under Join as.
 3. Enter the name, email, and password and submit.
 4. The account signs in and opens the driver workspace automatically.
-5. Trips appear once an admin assigns them to that driver. Existing passenger accounts are not converted by registering the same email again.
+5. Drivers can use **Create trip** on `/driver/trips` to choose a route, departure time, and existing fleet vehicle. New trips are automatically assigned to the signed-in driver. Admin-assigned trips also appear here. Existing passenger accounts are not converted by registering the same email again.
 
 Passenger remains the default. Public signup accepts only CLIENT or DRIVER; ADMIN and invalid roles are rejected by the API.
 
@@ -40,3 +40,7 @@ If signup returns `property role should not exist`, the frontend is reaching an 
 - Reduced motion disables continuous visual effects; WebGL failure falls back to CSS artwork.
 
 Reference: https://iot4all.netlify.app/
+
+## Driver trip creation deployment
+
+Deploy both the API and web changes. The API must allow drivers to create trips and list vehicles before the new form can work. No database migration is required for this feature. If no vehicles exist, an admin must add one first.
